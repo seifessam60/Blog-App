@@ -1,0 +1,333 @@
+﻿@model Blog_App.Models.BlogPost
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none"><i class="bi bi-house-door"></i> Home</a></li>
+            <li class="breadcrumb-item active">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Main Article Card -->
+            <article class="article-detail-card shadow-lg">
+                <!-- Article Header -->
+                <div class="article-header">
+                    <div class="header-gradient"></div>
+                    <div class="article-meta p-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div>
+                                <span class="author-badge-large">
+                                    <i class="bi bi-person-circle me-2"></i>@Model.Author
+                                </span>
+                            </div>
+                            <div class="d-flex gap-3 align-items-center">
+                                <span class="date-info">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    @Model.CreatedAt.ToString("MMMM dd, yyyy")
+                                </span>
+                                <span class="read-time">
+                                    <i class="bi bi-clock me-1"></i>
+                                    @Math.Max(1, Model.Content.Split(' ').Length / 200) min read
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Title -->
+                <div class="article-title-section p-5 pb-3">
+                    <h1 class="article-title mb-3">@Model.Title</h1>
+                    <div class="title-underline"></div>
+                </div>
+
+                <!-- Article Content -->
+                <div class="article-content p-5 pt-4">
+                    <div class="content-text">
+                        @foreach (var paragraph in Model.Content.Split(new[] { "\n\n", "\r\n\r\n" }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <p class="mb-4">@paragraph</p>
+                        }
+                    </div>
+                </div>
+
+                <!-- Article Footer -->
+                <div class="article-footer p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg w-100">
+                                <i class="bi bi-arrow-left me-2"></i>Back to All Posts
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg w-100">
+                                <i class="bi bi-pencil me-2"></i>Edit
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg w-100">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Share Section -->
+            <div class="share-section mt-4 p-4 text-center">
+                <h5 class="mb-3">
+                    <i class="bi bi-share me-2"></i>Share this article
+                </h5>
+                <div class="d-flex justify-content-center gap-3">
+                    <button class="btn btn-social btn-twitter">
+                        <i class="bi bi-twitter"></i>
+                    </button>
+                    <button class="btn btn-social btn-facebook">
+                        <i class="bi bi-facebook"></i>
+                    </button>
+                    <button class="btn btn-social btn-linkedin">
+                        <i class="bi bi-linkedin"></i>
+                    </button>
+                    <button class="btn btn-social btn-link">
+                        <i class="bi bi-link-45deg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Related Posts Section -->
+            <div class="related-posts mt-5">
+                <h3 class="section-title mb-4">
+                    <i class="bi bi-collection me-2"></i>You might also like
+                </h3>
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-hourglass-split fs-1 mb-3 d-block"></i>
+                    <p>Related posts coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Article Detail Card */
+    .article-detail-card {
+        background: white;
+        border-radius: 25px;
+        overflow: hidden;
+        animation: fadeIn 0.6s ease;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Article Header */
+    .article-header {
+        position: relative;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .header-gradient {
+        height: 8px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #667eea);
+        background-size: 200% 100%;
+        animation: gradientShift 3s ease infinite;
+    }
+
+    @@keyframes gradientShift {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+
+    .article-meta {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Badges */
+    .author-badge-large {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .date-info, .read-time {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Article Title */
+    .article-title-section {
+        background: linear-gradient(180deg, rgba(102, 126, 234, 0.03) 0%, transparent 100%);
+    }
+
+    .article-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        line-height: 1.3;
+        margin-bottom: 1rem;
+    }
+
+    .title-underline {
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+        animation: expandWidth 0.8s ease;
+    }
+
+    @@keyframes expandWidth {
+        from {
+            width: 0;
+        }
+
+        to {
+            width: 80px;
+        }
+    }
+
+    /* Article Content */
+    .article-content {
+        background: white;
+    }
+
+    .content-text {
+        font-size: 1.15rem;
+        line-height: 1.9;
+        color: #4a5568;
+    }
+
+        .content-text p {
+            text-align: justify;
+        }
+
+            .content-text p:first-letter {
+                font-size: 3.5rem;
+                font-weight: 700;
+                float: left;
+                line-height: 1;
+                margin-right: 10px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+    /* Article Footer */
+    .article-footer {
+        background: linear-gradient(180deg, transparent 0%, rgba(102, 126, 234, 0.03) 100%);
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Share Section */
+    .share-section {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-social {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        border: none;
+        color: white;
+    }
+
+    .btn-twitter {
+        background: #1DA1F2;
+    }
+
+    .btn-facebook {
+        background: #1877F2;
+    }
+
+    .btn-linkedin {
+        background: #0A66C2;
+    }
+
+    .btn-link {
+        background: #6c757d;
+    }
+
+    .btn-social:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Related Posts */
+    .related-posts {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-title {
+        font-weight: 700;
+        color: #2d3748;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb-item a {
+        color: #667eea;
+        font-weight: 500;
+    }
+
+        .breadcrumb-item a:hover {
+            color: #764ba2;
+        }
+
+    .breadcrumb-item.active {
+        color: #6c757d;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .article-title {
+            font-size: 1.8rem;
+        }
+
+        .content-text {
+            font-size: 1rem;
+        }
+
+            .content-text p:first-letter {
+                font-size: 2.5rem;
+            }
+    }
+</style>
