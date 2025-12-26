@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog_App.Data
 {
-    public class ApplicationDbContext: DbContext
+    public class IBlogRepositoryApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions options): base(options)
         {

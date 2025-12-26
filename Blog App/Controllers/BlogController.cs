@@ -1,5 +1,7 @@
 ﻿using Blog_App.Data;
+using Blog_App.Interfaces;
 using Blog_App.Models;
+using Blog_App.Repositories;
 using Blog_App.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +11,15 @@ namespace Blog_App.Controllers
 {
     public class BlogController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IBlogRepository _blogRepository;
 
-        public BlogController(ApplicationDbContext context)
+        public BlogController(IBlogRepository blogRepository)
         {
-            this._context = context;
+            _blogRepository = blogRepository;
         }
         public async Task<IActionResult> Index()
         {
-            var posts = await _context.BlogPosts.OrderByDescending(b=>b.CreatedAt).ToListAsync();
+            var posts = await _blogRepository.GetAllAsync();
             return View(posts);
         }
         public async Task<IActionResult> Details(int? id)
@@ -27,7 +29,7 @@ namespace Blog_App.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == id);
+            var blogPost = await _blogRepository.GetByIdAsync(id.Value);
             if(blogPost == null)
             {
                  return NotFound();
@@ -52,8 +54,7 @@ namespace Blog_App.Controllers
                     Author = model.Author,
                     CreatedAt = DateTime.Now
                 };
-                _context.BlogPosts.Add(blogPost);
-                await _context.SaveChangesAsync();
+                await _blogRepository.AddAsync(blogPost);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
@@ -66,7 +67,7 @@ namespace Blog_App.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+            var blogPost = await _blogRepository.GetByIdAsync(id.Value);
             if(blogPost == null)
             {
                 return NotFound();
@@ -95,7 +96,7 @@ namespace Blog_App.Controllers
             {
                 try
                 {
-                    var blogPost = await _context.BlogPosts.FindAsync(id);
+                    var blogPost = await _blogRepository.GetByIdAsync(id);
                     if (blogPost == null)
                     {
                         return NotFound();
@@ -106,19 +107,12 @@ namespace Blog_App.Controllers
                     blogPost.Content = model.Content;
                     blogPost.Author = model.Author;
 
-                    _context.Update(blogPost);
-                    await _context.SaveChangesAsync();
+                    await _blogRepository.EditAsync(blogPost);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
 
-                    if (!BlogPostExists(id)){
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    
                 }
             return RedirectToAction(nameof(Index));
             }
@@ -132,7 +126,7 @@ namespace Blog_App.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == id);
+            var blogPost = await _blogRepository.GetByIdAsync(id.Value);
 
             if(blogPost == null)
             {
@@ -146,21 +140,16 @@ namespace Blog_App.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var blogPost = await _context.BlogPosts.FindAsync(id);
-            if( blogPost != null)
+            var result = await _blogRepository.DeleteAsync(id);
+            if (!result)
             {
-                _context.BlogPosts.Remove(blogPost);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
             
              return RedirectToAction(nameof(Index));
         }
  
 
-        // Helper method
-        public bool BlogPostExists(int id)
-        {
-            return _context.BlogPosts.Any(b => b.Id == id);
-        }
+        
     }
 }
