@@ -4,6 +4,7 @@ using Blog_App.Models;
 using Blog_App.Repositories;
 using Blog_App.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -17,9 +18,17 @@ namespace Blog_App.Controllers
         {
             _blogRepository = blogRepository;
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchTerm, string? author, string? sortOrder)
         {
-            var posts = await _blogRepository.GetAllAsync();
+            var authors = await _blogRepository.GetAllAuthorsAsync();
+            ViewBag.Authors = new SelectList(authors);
+
+            ViewBag.CurrentSearch = searchTerm;
+            ViewBag.CurrentAuthor = author;
+            ViewBag.CurrentSort = sortOrder;
+
+            var posts = await _blogRepository.GetAllAsync(searchTerm, author, sortOrder);
+
             return View(posts);
         }
         public async Task<IActionResult> Details(int? id)

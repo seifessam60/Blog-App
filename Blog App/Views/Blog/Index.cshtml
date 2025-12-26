@@ -19,6 +19,95 @@
         </div>
     </div>
 </div>
+<!-- Search & Filter Section -->
+<div class="container my-4">
+    <div class="search-filter-card shadow-sm">
+        <form asp-action="Index" method="get" class="row g-3 align-items-end">
+            <!-- Search Box -->
+            <div class="col-md-5">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-search me-1"></i>Search
+                </label>
+                <input type="text"
+                       name="searchTerm"
+                       value="@ViewBag.CurrentSearch"
+                       class="form-control form-control-search"
+                       placeholder="Search by title, content, or author...">
+            </div>
+
+            <!-- Author Filter -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-person me-1"></i>Author
+                </label>
+                <select name="author" class="form-select form-select-custom">
+                    <option value="">All Authors</option>
+                    @foreach (var auth in ViewBag.Authors as SelectList)
+                    {
+                        <option value="@auth.Text" selected="@(auth.Text == ViewBag.CurrentAuthor)">
+                            @auth.Text
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Sort Order -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-sort-down me-1"></i>Sort By
+                </label>
+                <select name="sortOrder" class="form-select form-select-custom">
+                    <option value="date_desc" selected="@(ViewBag.CurrentSort == "date_desc" || ViewBag.CurrentSort == null)">Newest First</option>
+                    <option value="date_asc" selected="@(ViewBag.CurrentSort == "date_asc")">Oldest First</option>
+                    <option value="title_asc" selected="@(ViewBag.CurrentSort == "title_asc")">Title (A-Z)</option>
+                    <option value="title_desc" selected="@(ViewBag.CurrentSort == "title_desc")">Title (Z-A)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-md-1">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-gradient flex-fill" title="Apply Filters">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary" title="Clear Filters">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+
+        <!-- Results Info -->
+        @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch) || !string.IsNullOrEmpty(ViewBag.CurrentAuthor))
+        {
+            <div class="mt-3 pt-3 border-top">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Found <strong>@Model.Count()</strong> result(s)
+                        </span>
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentSearch))
+                        {
+                            <span class="badge bg-primary-gradient ms-2">
+                                <i class="bi bi-search me-1"></i>@ViewBag.CurrentSearch
+                            </span>
+                        }
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentAuthor))
+                        {
+                            <span class="badge bg-success-gradient ms-2">
+                                <i class="bi bi-person me-1"></i>@ViewBag.CurrentAuthor
+                            </span>
+                        }
+                    </div>
+                    <a asp-action="Index" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-x-circle me-1"></i>Clear All Filters
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 <!-- Stats Section -->
 <div class="container my-4">
@@ -145,6 +234,55 @@
 </div>
 
 <style>
+    /* Search & Filter Card */
+    .search-filter-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        border: 2px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control-search,
+    .form-select-custom {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control-search:focus,
+        .form-select-custom:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+    .btn-primary-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-success-gradient {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
     .hero-section {
         background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
         border-radius: 20px;

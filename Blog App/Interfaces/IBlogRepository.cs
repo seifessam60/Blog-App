@@ -22,5 +22,9 @@ namespace Blog_App.Interfaces
         // Get recent posts
         Task<IEnumerable<BlogPost>> GetRecentPostsAsync(int count);
 
+        Task<IEnumerable<BlogPost>> SearchAsync(string searchTerm);
+        Task<IEnumerable<BlogPost>> GetAllAsync(string? searchTerm, string? author, string? sortOrder);
+        Task<IEnumerable<string>> GetAllAuthorsAsync();
+
     }
 }
