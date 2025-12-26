@@ -1,8 +1,200 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Blog_App.Models.BlogPost>
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+<section class="home-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <h1 class="hero-title">Welcome to My Blog</h1>
+                <p class="hero-subtitle">Where Ideas Come to Life ✨</p>
+                <p class="hero-description">
+                    Discover insightful articles, engaging stories, and expert perspectives on technology,
+                    development, and everything in between. Join our community of passionate readers and writers.
+                </p>
+                <div class="hero-buttons">
+                    <a asp-controller="Blog" asp-action="Index" class="btn btn-hero-primary">
+                        <i class="bi bi-book me-2"></i>Explore Articles
+                    </a>
+                    <a asp-controller="Blog" asp-action="Create" class="btn btn-hero-secondary">
+                        <i class="bi bi-pencil me-2"></i>Start Writing
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center hero-image d-none d-lg-block">
+                <svg class="hero-illustration" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Decorative SVG Illustration -->
+                    <circle cx="250" cy="250" r="200" fill="rgba(255,255,255,0.1)" />
+                    <circle cx="250" cy="250" r="150" fill="rgba(255,255,255,0.15)" />
+                    <circle cx="250" cy="250" r="100" fill="rgba(255,255,255,0.2)" />
+                    <text x="250" y="270" font-size="120" fill="white" text-anchor="middle" font-family="Poppins">📝</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="bi bi-file-text"></i>
+                        </div>
+                        <div class="stat-number">@ViewBag.TotalPosts</div>
+                        <div class="stat-label">Published Articles</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="stat-number">@ViewBag.TotalAuthors</div>
+                        <div class="stat-label">Contributing Authors</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Passion & Quality</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Why Choose Us</span>
+            <h2 class="section-title">Everything You Need for Great Content</h2>
+            <p class="section-description">
+                Our platform provides all the tools and features you need to create, share, and discover amazing content.
+            </p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
+                    <h3 class="feature-title">Fast & Modern</h3>
+                    <p class="feature-description">
+                        Built with the latest technologies to ensure a smooth, fast, and responsive experience on all devices.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-palette"></i>
+                    </div>
+                    <h3 class="feature-title">Beautiful Design</h3>
+                    <p class="feature-description">
+                        Carefully crafted user interface with attention to detail, making reading and writing a pleasure.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h3 class="feature-title">Easy Discovery</h3>
+                    <p class="feature-description">
+                        Powerful search and filtering tools to help you find exactly what you're looking for quickly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Posts Section -->
+<section class="recent-posts-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-badge">Latest Content</span>
+            <h2 class="section-title">Recent Articles</h2>
+            <p class="section-description">
+                Check out our latest articles and stay up to date with fresh content from our talented writers.
+            </p>
+        </div>
+        <div class="row g-4">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var post in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="post-card">
+                            <div class="post-card-gradient"></div>
+                            <div class="post-card-body">
+                                <div class="post-meta">
+                                    <span class="post-author">
+                                        <i class="bi bi-person me-1"></i>@post.Author
+                                    </span>
+                                    <span class="post-date">
+                                        <i class="bi bi-calendar me-1"></i>@post.CreatedAt.ToString("MMM dd")
+                                    </span>
+                                </div>
+                                <h3 class="post-title">@post.Title</h3>
+                                <p class="post-excerpt">
+                                    @(post.Content.Length > 100
+                                                                ? post.Content.Substring(0, 100) + "..."
+                                                                : post.Content)
+                                </p>
+                                <a asp-controller="Blog" asp-action="Details" asp-route-id="@post.Id" class="post-read-more">
+                                    Read More <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">No articles published yet. Be the first to write!</p>
+                </div>
+            }
+        </div>
+        @if (Model != null && Model.Any())
+        {
+            <div class="text-center mt-5">
+                <a asp-controller="Blog" asp-action="Index" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-grid me-2"></i>View All Articles
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Share Your Story?</h2>
+            <p class="cta-description">
+                Join our community of writers and start sharing your knowledge, experiences, and ideas with the world today.
+            </p>
+            <a asp-controller="Blog" asp-action="Create" class="btn btn-cta">
+                <i class="bi bi-plus-circle me-2"></i>Create Your First Article
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}

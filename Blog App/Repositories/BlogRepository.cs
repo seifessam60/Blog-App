@@ -1,5 +1,6 @@
 ﻿using AspNetCoreGeneratedDocument;
 using Blog_App.Data;
+using Blog_App.Helpers;
 using Blog_App.Interfaces;
 using Blog_App.Models;
 using Microsoft.EntityFrameworkCore;
@@ -108,6 +109,45 @@ namespace Blog_App.Repositories
                 .Distinct()
                 .OrderBy(a => a)
                 .ToListAsync();
+        }
+
+        public async Task<PaginatedList<BlogPost>> GetAllPaginatedAsync(
+            string? searchTerm,
+            string? author,
+            string? sortOrder,
+            int pageIndex,
+            int pageSize)
+        {
+            // نبدأ بكل البوستات
+            var query = _context.BlogPosts.AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(p =>
+                    p.Title.Contains(searchTerm) ||
+                    p.Content.Contains(searchTerm) ||
+                    p.Author.Contains(searchTerm));
+            }
+
+            // Filter by Author
+            if (!string.IsNullOrWhiteSpace(author))
+            {
+                query = query.Where(p => p.Author == author);
+            }
+
+            // Sort
+            query = sortOrder switch
+            {
+                "date_asc" => query.OrderBy(p => p.CreatedAt),
+                "date_desc" => query.OrderByDescending(p => p.CreatedAt),
+                "title_asc" => query.OrderBy(p => p.Title),
+                "title_desc" => query.OrderByDescending(p => p.Title),
+                _ => query.OrderByDescending(p => p.CreatedAt)
+            };
+
+            // Pagination
+            return await PaginatedList<BlogPost>.CreateAsync(query, pageIndex, pageSize);
         }
     }
 }

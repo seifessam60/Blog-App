@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Blog_App.Interfaces;
 using Blog_App.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,16 +8,25 @@ namespace Blog_App.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IBlogRepository _blogRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IBlogRepository blogRepository)
         {
-            _logger = logger;
+            _blogRepository = blogRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var recentPosts = await _blogRepository.GetRecentPostsAsync(3);
+
+            var allPosts = await _blogRepository.GetAllAsync();
+            var totalPosts = allPosts.Count();
+            var totalAuthors = allPosts.Select(p => p.Author).Distinct().Count();
+
+            ViewBag.TotalPosts = totalPosts;
+            ViewBag.TotalAuthors = totalAuthors;
+
+            return View(recentPosts);
         }
 
         public IActionResult Privacy()

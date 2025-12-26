@@ -1,4 +1,5 @@
-﻿using Blog_App.Models;
+﻿using Blog_App.Helpers;
+using Blog_App.Models;
 
 namespace Blog_App.Interfaces
 {
@@ -25,6 +26,13 @@ namespace Blog_App.Interfaces
         Task<IEnumerable<BlogPost>> SearchAsync(string searchTerm);
         Task<IEnumerable<BlogPost>> GetAllAsync(string? searchTerm, string? author, string? sortOrder);
         Task<IEnumerable<string>> GetAllAuthorsAsync();
+
+        Task<PaginatedList<BlogPost>> GetAllPaginatedAsync(
+           string? searchTerm,
+           string? author,
+           string? sortOrder,
+           int pageIndex,
+           int pageSize);
 
     }
 }

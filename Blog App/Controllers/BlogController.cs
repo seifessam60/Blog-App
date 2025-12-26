@@ -18,16 +18,32 @@ namespace Blog_App.Controllers
         {
             _blogRepository = blogRepository;
         }
-        public async Task<IActionResult> Index(string? searchTerm, string? author, string? sortOrder)
+        public async Task<IActionResult> Index(
+            string? searchTerm,
+            string? author,
+            string? sortOrder,
+            int? pageNumber)
         {
+            // إعدادات الـ Pagination
+            int pageSize = 6; // عدد البوستات في كل صفحة
+            int pageIndex = pageNumber ?? 1;
+
+            // نجيب كل الكتّاب للـ Filter Dropdown
             var authors = await _blogRepository.GetAllAuthorsAsync();
             ViewBag.Authors = new SelectList(authors);
 
+            // نحفظ القيم علشان نعرضها في الـ View
             ViewBag.CurrentSearch = searchTerm;
             ViewBag.CurrentAuthor = author;
             ViewBag.CurrentSort = sortOrder;
 
-            var posts = await _blogRepository.GetAllAsync(searchTerm, author, sortOrder);
+            // نجيب البوستات مع الفلترة والـ Pagination
+            var posts = await _blogRepository.GetAllPaginatedAsync(
+                searchTerm,
+                author,
+                sortOrder,
+                pageIndex,
+                pageSize);
 
             return View(posts);
         }

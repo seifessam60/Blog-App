@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,6 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
     <header>
@@ -27,17 +34,17 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-house-door me-1"></i>Home
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" asp-area="" asp-controller="Blog" asp-action="Index">
+                            <a class="nav-link @(currentController == "Blog" ? "active" : "")" asp-area="" asp-controller="Blog" asp-action="Index">
                                 <i class="bi bi-newspaper me-1"></i>Blog
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">
+                            <a class="nav-link @(currentController == "Home" && currentAction == "Privacy" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Privacy">
                                 <i class="bi bi-shield-check me-1"></i>Privacy
                             </a>
                         </li>
@@ -63,9 +70,9 @@
                     </h5>
                     <p class="text-white-50">Share your thoughts and ideas with the world.</p>
                 </div>
-                <div class="col-md-6 text-md-end">
+                <div class="col-md-6 text-md-end text-white">
                     <p class="mb-1">&copy; 2024 - My Blog</p>
-                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted">Privacy</a>
+                    <a class="text-white" asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted">Privacy</a>
                 </div>
             </div>
         </div>

@@ -1,0 +1,8 @@
+﻿/* ==================== Delete Page Styles ==================== */
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.card.border-danger {
+    border-width: 2px;
+}
